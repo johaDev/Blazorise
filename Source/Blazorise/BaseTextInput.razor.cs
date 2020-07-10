@@ -25,7 +25,7 @@ namespace Blazorise
 
         protected override void BuildClasses( ClassBuilder builder )
         {
-            builder.Append( ClassProvider.TextEdit( IsPlaintext ) );
+            builder.Append( ClassProvider.TextEdit( Plaintext ) );
             builder.Append( ClassProvider.TextEditColor( Color ), Color != Color.None );
             builder.Append( ClassProvider.TextEditSize( Size ), Size != Size.None );
             builder.Append( ClassProvider.TextEditValidation( ParentValidation?.Status ?? ValidationStatus.None ), ParentValidation?.Status != ValidationStatus.None );
@@ -53,14 +53,16 @@ namespace Blazorise
             return Task.CompletedTask;
         }
 
-        protected virtual Task OnInputHandler( ChangeEventArgs e )
+        protected virtual async Task OnInputHandler( ChangeEventArgs e )
         {
             if ( Options.ChangeTextOnKeyPress )
             {
-                return CurrentValueHandler( e?.Value?.ToString() );
-            }
+                var caret = await JSRunner.GetCaret( ElementRef );
 
-            return Task.CompletedTask;
+                await CurrentValueHandler( e?.Value?.ToString() );
+
+                await JSRunner.SetCaret( ElementRef, caret );
+            }
         }
 
         #endregion
@@ -77,7 +79,7 @@ namespace Blazorise
         /// <summary>
         /// Sets the class to remove the default form field styling and preserve the correct margin and padding.
         /// </summary>
-        [Parameter] public bool IsPlaintext { get; set; }
+        [Parameter] public bool Plaintext { get; set; }
 
         /// <summary>
         /// Sets the input text color.
@@ -90,7 +92,6 @@ namespace Blazorise
             {
                 color = value;
 
-                DirtyClasses();
                 DirtyClasses();
             }
         }

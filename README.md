@@ -22,6 +22,7 @@ Blazorise is a component library built on top of [Blazor](https://blazor.net/) a
 - [Material Demo](https://materialdemo.blazorise.com/)
 - [Bulma Demo](https://bulmademo.blazorise.com/)
 - [eFrolic Demo](https://efrolicdemo.blazorise.com/)
+- [AntDesign Demo](https://antdesigndemo.blazorise.com/)
 
 ### Blazor Server
 
@@ -33,18 +34,25 @@ Note: This project is still experimental so it's possible that some components w
 
 [Releases](https://blazorise.com/docs/releases/) and [Roadmap](https://github.com/stsrki/Blazorise/issues/304)
 
+## Documentation
+
+For full documentation, please visit the [Blazorise official documentation page](https://blazorise.com/docs/).
+
+Continuing reading below for a quick start guide.
+
 ## Prerequisites
 
 Before you continue, please make sure you have the latest version of Visual Studio and .Net Core installed. Visit an official [Blazor](https://dotnet.microsoft.com/apps/aspnet/web-apps/client) site to learn more.
 
 ## Installations
 
-There are currently 4 different NuGet packages for each of the supported CSS frameworks. Available packages are:
+There are currently 5 different NuGet packages for each of the supported CSS frameworks. Available packages are:
 
 ```
 - Blazorise.Bootstrap
 - Blazorise.Bulma
 - Blazorise.Material
+- Blazorise.AntDesign
 - Blazorise.Frolic
 ```
 
@@ -72,16 +80,16 @@ In this step we're also going to define the links for Blazorise content files th
 
 ```html
 <!-- inside of head section -->
-<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+<link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
 <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.12.0/css/all.css">
 
 <link href="_content/Blazorise/blazorise.css" rel="stylesheet" />
 <link href="_content/Blazorise.Bootstrap/blazorise.bootstrap.css" rel="stylesheet" />
 
 <!-- inside of body section and after the <app> tag  -->
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
-<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js" integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI" crossorigin="anonymous"></script>
 
 <script src="_content/Blazorise/blazorise.js"></script>
 <script src="_content/Blazorise.Bootstrap/blazorise.bootstrap.js"></script>
@@ -135,6 +143,11 @@ public class Program
       } )
       .AddBootstrapProviders()
       .AddFontAwesomeIcons();
+
+    builder.Services.AddSingleton( new HttpClient
+    {
+      BaseAddress = new Uri( builder.HostEnvironment.BaseAddress )
+    } );
 
     builder.RootComponents.Add<App>( "app" );
 

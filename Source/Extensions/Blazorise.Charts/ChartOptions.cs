@@ -1,9 +1,7 @@
 ﻿#region Using directives
 using System;
 using System.Collections.Generic;
-using System.Linq;
 using System.Runtime.Serialization;
-using System.Threading.Tasks;
 #endregion
 
 namespace Blazorise.Charts
@@ -22,6 +20,31 @@ namespace Blazorise.Charts
 
         [DataMember( EmitDefaultValue = false )]
         public Animation Animation { get; set; }
+
+        /// <summary>
+        /// Resizes the chart canvas when its container does.
+        /// </summary>
+        [DataMember( EmitDefaultValue = false )]
+        public bool? Responsive { get; set; } = true;
+
+        /// <summary>
+        /// Maintain the original canvas aspect ratio (width / height) when resizing.
+        /// </summary>
+        [DataMember( EmitDefaultValue = false )]
+        public bool? MaintainAspectRatio { get; set; } = true;
+
+        /// <summary>
+        /// Duration in milliseconds it takes to animate to new size after a resize event.
+        /// </summary>
+        [DataMember( EmitDefaultValue = false )]
+        public double? ResponsiveAnimationDuration { get; set; } = 0;
+
+        /// <summary>
+        /// Canvas aspect ratio (i.e. width / height, a value of 1 representing a square canvas).
+        /// Note that this option is ignored if the height is explicitly defined either as attribute or via the style.
+        /// </summary>
+        [DataMember( EmitDefaultValue = false )]
+        public double? AspectRatio { get; set; } = 2;
     }
 
     #region Specifics
@@ -124,10 +147,10 @@ namespace Blazorise.Charts
     public class Scales
     {
         [DataMember( EmitDefaultValue = false )]
-        public List<Axe> XAxes { get; set; }
+        public List<Axis> XAxes { get; set; }
 
         [DataMember( EmitDefaultValue = false )]
-        public List<Axe> YAxes { get; set; }
+        public List<Axis> YAxes { get; set; }
     }
 
     [DataContract]
@@ -163,8 +186,11 @@ namespace Blazorise.Charts
     }
 
     [DataContract]
-    public class Axe
+    public class Axis
     {
+        [DataMember( EmitDefaultValue = false )]
+        public string Type { get; set; }
+
         [DataMember]
         public bool Display { get; set; } = true;
 
@@ -173,6 +199,9 @@ namespace Blazorise.Charts
 
         [DataMember( EmitDefaultValue = false )]
         public AxeGridLines GridLines { get; set; }
+
+        [DataMember( EmitDefaultValue = false )]
+        public AxeScaleLabel ScaleLabel { get; set; }
     }
 
     /// <summary>
@@ -241,6 +270,9 @@ namespace Blazorise.Charts
         [DataMember]
         public int Padding { get; set; }
 
+        /// <summary>
+        /// if true, scale will include 0 if it is not already included.
+        /// </summary>
         [DataMember]
         public bool BeginAtZero { get; set; }
     }
@@ -420,6 +452,60 @@ namespace Blazorise.Charts
         /// </summary>
         [DataMember]
         public bool OffsetGridLines { get; set; }
+    }
+
+    /// <summary>
+    /// Defines options for the scale title.
+    /// </summary>
+    public class AxeScaleLabel
+    {
+        /// <summary>
+        /// If true, display the axis title.
+        /// </summary>
+        [DataMember]
+        public bool Display { get; set; }
+
+        /// <summary>
+        /// The text for the title. (i.e. "# of People" or "Response Choices").
+        /// </summary>
+        [DataMember]
+        public string LabelString { get; set; } = "";
+
+        /// <summary>
+        /// Height of an individual line of text (<see cref="https://developer.mozilla.org/en-US/docs/Web/CSS/line-height"/>).
+        /// </summary>
+        [DataMember]
+        public double LineHeight { get; set; } = 1.2d;
+
+        /// <summary>
+        /// Font color for scale title.
+        /// </summary>
+        [DataMember]
+        public string FontColor { get; set; } = "#666";
+
+        /// <summary>
+        /// Font family for the scale title, follows CSS font-family options.
+        /// </summary>
+        [DataMember]
+        public string FontFamily { get; set; } = "'Helvetica Neue', 'Helvetica', 'Arial', sans-serif";
+
+        /// <summary>
+        /// Font size for scale title.
+        /// </summary>
+        [DataMember]
+        public double FontSize { get; set; } = 12;
+
+        /// <summary>
+        /// Font style for the scale title, follows CSS font-style options (i.e. normal, italic, oblique, initial, inherit).
+        /// </summary>
+        [DataMember]
+        public string FontStyle { get; set; } = "normal";
+
+        /// <summary>
+        /// Padding to apply around scale labels. Only top and bottom are implemented.
+        /// </summary>
+        [DataMember]
+        public object Padding { get; set; } = 4;
     }
 
     /// <summary>

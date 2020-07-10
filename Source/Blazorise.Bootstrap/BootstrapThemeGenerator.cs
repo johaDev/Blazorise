@@ -1,6 +1,7 @@
 ﻿#region Using directives
 using System;
 using System.Collections.Generic;
+using System.Net.Http.Headers;
 using System.Text;
 #endregion
 
@@ -10,16 +11,36 @@ namespace Blazorise.Bootstrap
     {
         #region Methods
 
+        protected override void GenerateBreakpointStyles( StringBuilder sb, Theme theme, string breakpointName, string breakpointSize )
+        {
+            if ( !string.IsNullOrEmpty( breakpointSize ) )
+            {
+                if ( !string.IsNullOrEmpty( theme?.ContainerMaxWidthOptions?[breakpointName]?.Invoke() ) )
+                {
+                    var containerSize = theme.ContainerMaxWidthOptions[breakpointName].Invoke();
+
+                    sb.Append( MediaBreakpointUp( breakpointName, $".container{{max-width: {containerSize};}}" ) );
+                }
+            }
+
+            base.GenerateBreakpointStyles( sb, theme, breakpointName, breakpointSize );
+        }
+
         protected override void GenerateBackgroundVariantStyles( StringBuilder sb, Theme theme, string variant )
         {
             sb.Append( $".bg-{variant}" ).Append( "{" )
                 .Append( $"background-color: {Var( ThemeVariables.BackgroundColor( variant ) )} !important;" )
                 .AppendLine( "}" );
+
+            sb.Append( $".jumbotron-{variant}" ).Append( "{" )
+                .Append( $"background-color: {Var( ThemeVariables.BackgroundColor( variant ) )} !important;" )
+                .Append( $"color: {ToHex( Contrast( theme, Var( ThemeVariables.BackgroundColor( variant ) ) ) )} !important;" )
+                .AppendLine( "}" );
         }
 
         protected override void GenerateButtonVariantStyles( StringBuilder sb, Theme theme, string variant, ThemeButtonOptions options )
         {
-            var background = Var( ThemeVariables.ButtonBackgrund( variant ) );
+            var background = Var( ThemeVariables.ButtonBackground( variant ) );
             var border = Var( ThemeVariables.ButtonBorder( variant ) );
             var hoverBackground = Var( ThemeVariables.ButtonHoverBackground( variant ) );
             var hoverBorder = Var( ThemeVariables.ButtonHoverBorder( variant ) );
@@ -228,6 +249,12 @@ namespace Blazorise.Bootstrap
             sb
                 .Append( $".custom-control-input:checked ~ .custom-control-label::before" ).Append( "{" )
                 .Append( $"color: {options.Color};" )
+                .Append( $"border-color: {options.CheckColor};" )
+                .Append( $"background-color: {options.CheckColor};" )
+                .AppendLine( "}" );
+
+            sb
+                .Append( $".custom-switch .custom-control-input:checked ~ .custom-control-label::before" ).Append( "{" )
                 .Append( $"background-color: {options.CheckColor};" )
                 .AppendLine( "}" );
         }
@@ -239,7 +266,7 @@ namespace Blazorise.Bootstrap
             if ( backgroundColor.IsEmpty )
                 return;
 
-            var yiqBackgroundColor = Contrast( backgroundColor );
+            var yiqBackgroundColor = Contrast( theme, backgroundColor );
 
             var background = ToHex( backgroundColor );
             var yiqBackground = ToHex( yiqBackgroundColor );
@@ -294,7 +321,7 @@ namespace Blazorise.Bootstrap
             sb.Append( $".table-{variant} th," )
                 .Append( $".table-{variant} td," )
                 .Append( $".table-{variant} thead td," )
-                .Append( $".table-{variant} tbody + tbody," )
+                .Append( $".table-{variant} tbody + tbody" )
                 .Append( "{" )
                 .Append( $"border-color: {border};" )
                 .AppendLine( "}" );
@@ -350,6 +377,12 @@ namespace Blazorise.Bootstrap
                     .Append( "{" )
                     .Append( $"background-color: {Var( ThemeVariables.Color( "primary" ) )};" )
                     .AppendLine( "}" );
+
+                sb
+                    .Append( $".nav.nav-tabs .nav-item a.nav-link:not(.active)" )
+                    .Append( "{" )
+                    .Append( $"color: {Var( ThemeVariables.Color( "primary" ) )};" )
+                    .AppendLine( "}" );
             }
         }
 
@@ -381,17 +414,17 @@ namespace Blazorise.Bootstrap
                 .AppendLine( "}" );
 
 
-            if ( !string.IsNullOrEmpty( theme.ColorOptions?.Primary ) )
+            if ( !string.IsNullOrEmpty( Var( ThemeVariables.BreadcrumbColor ) ) )
             {
                 sb.Append( $".breadcrumb-item>a" ).Append( "{" )
-                    .Append( $"color: {theme.ColorOptions.Primary};" )
+                    .Append( $"color: {Var( ThemeVariables.BreadcrumbColor )};" )
                     .AppendLine( "}" );
             }
         }
 
         protected override void GenerateBadgeStyles( StringBuilder sb, Theme theme, ThemeBadgeOptions options )
         {
-            sb.Append( $".badge" ).Append( "{" )
+            sb.Append( $".badge:not(.badge-pill)" ).Append( "{" )
                 .Append( $"border-radius: {GetBorderRadius( theme, options?.BorderRadius, Var( ThemeVariables.BorderRadius ) )};" )
                 .AppendLine( "}" );
         }
@@ -440,6 +473,30 @@ namespace Blazorise.Bootstrap
                     .Append( $"color: {yiqColor};" )
                     .AppendLine( "}" );
             }
+        }
+
+        protected override void GenerateParagraphVariantStyles( StringBuilder sb, Theme theme, string variant, string inTextColor )
+        {
+            var textColor = ParseColor( inTextColor );
+
+            var textColorHex = ToHex( textColor );
+
+            sb.Append( $".text-{variant}" )
+                .Append( "{" )
+                .Append( $"color: {textColorHex};" )
+                .AppendLine( "}" );
+        }
+
+        protected override void GenerateInputVariantStyles( StringBuilder sb, Theme theme, string variant, string inColor )
+        {
+            var color = ToHex( ParseColor( inColor ) );
+
+            sb
+                .Append( $".form-control.text-{variant}," )
+                .Append( $".form-control-plaintext.text-{variant}" )
+                .Append( "{" )
+                .Append( $"color: {color};" )
+                .AppendLine( "}" );
         }
 
         #endregion
